@@ -67,8 +67,7 @@ export class BasketItem extends Component<IBasketLineView> {
     this._index = ensureElement<HTMLElement>('.basket__item-index', container);
     this._price = ensureElement<HTMLElement>('.card__price', container);
 
-    // ВАЖНО: в шаблоне кнопка удаления — "basketitem-delete", а не "basket__item-delete"
-    this._button = ensureElement<HTMLButtonElement>('.basketitem-delete', container);
+    this._button = ensureElement<HTMLButtonElement>('.basket__item-delete', container);
 
     this._button.addEventListener('click', (evt) => {
       this.container.remove();

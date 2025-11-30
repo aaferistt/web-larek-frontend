@@ -128,8 +128,10 @@ api
         },
       ];
       appData.setProducts(mocks);
+      console.log('AppData catalog length:', appData.catalog.length);
     } else {
       appData.setProducts(items);
+      console.log('AppData catalog length:', appData.catalog.length);
     }
   })
   .catch((err) => {
@@ -155,13 +157,14 @@ api
       },
     ];
     appData.setProducts(mocks);
+    console.log('AppData catalog length:', appData.catalog.length);
   });
 
 // ===== Events wiring
 
 // каталог загружен -> рисуем карточки
 events.on('catalog:loaded', (data: { products: IProduct[] }) => {
-  page.galery = data.products.map((item) => {
+  page.gallery = data.products.map((item) => {
     const card = new Card(cloneTemplate(tplCardCatalog), {
       onClick: () => events.emit('product:open', { productId: item.id }),
     });
@@ -185,8 +188,19 @@ events.on('product:open', ({ productId }: { productId: string }) => {
 
 // добавить в корзину
 events.on('product:add', ({ productId }: { productId: string }) => {
+  console.log('📥 product:add вызван с productId =', productId, typeof productId);
+  
+  const catalogIds = appData.catalog.map(p => ({ id: p.id, type: typeof p.id }));
+  console.log('📋 Все ID в каталоге:', catalogIds);
+
   const item = appData.catalog.find((p) => p.id === productId);
-  if (!item) return;
+  console.log('🔍 Найден товар?', item);
+
+  if (!item) {
+    console.warn('⚠️ Товар НЕ НАЙДЕН в каталоге по ID:', productId);
+    return;
+  }
+
   item.selected = true;
   appData.addToBasket([item]);
   page.counter = appData.getBasketAmount();
@@ -207,12 +221,10 @@ events.on('product:remove', ({ productId }: { productId: string }) => {
 events.on('cart:open', () => {
   renderBasketList();
   modal.render({
-    content: basketView.render({
-      items: [],
-      total: appData.getTotalBasketPrice(),
-      selected: [],
-    }),
-  });
+  content: basketView.render({
+    total: appData.getTotalBasketPrice(),
+  }),
+});
 });
 
 // состояние корзины изменилось

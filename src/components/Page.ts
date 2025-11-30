@@ -36,7 +36,7 @@ export class Page extends Component<IPage> {
   }
 
   // Рендер списка карточек на главной
-  set galery(items: HTMLElement[]) {
+  set gallery(items: HTMLElement[]) {
     this._gallery.replaceChildren(...items);
   }
 
